@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.jochoi.docandme.MainActivity">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="368dp"
+        android:layout_height="495dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        tools:layout_editor_absoluteY="8dp"
+        tools:layout_editor_absoluteX="8dp">
+
+        <!-- Include other widget or layout tags here. These are considered
+                "child views" or "children" of the linear layout -->
+
+        <TextView
+            android:id="@+id/main_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Looking for a doctor in Korea?"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintVertical_bias="0.295" />
+
+        <Button
+            android:id="@+id/button_specialty_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Specialty"
+            android:layout_below="@id/main_text" />
+
+        <Button
+            android:id="@+id/button_station_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Station"
+            android:layout_below="@id/button_specialty_select" />
+
+        <Button
+            android:id="@+id/button_language_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hospital Language"
+            android:layout_below="@id/button_station_select" />
+
+        <Button
+            android:id="@+id/button_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:onClick="performSearch"
+            android:layout_below="@id/button_language_select" />
+
+    </RelativeLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>
