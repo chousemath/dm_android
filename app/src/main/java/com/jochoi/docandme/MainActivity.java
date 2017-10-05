@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Button;
+import android.content.Intent;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Request;
@@ -168,5 +169,7 @@ public class MainActivity extends AppCompatActivity {
     public void performSearch(View view) {
         Toast searchToast = Toast.makeText(this, "Performing your search now...", Toast.LENGTH_SHORT);
         searchToast.show();
+        Intent intent = new Intent(this, SearchResultsActivity.class);
+        startActivity(intent);
     }
 }
