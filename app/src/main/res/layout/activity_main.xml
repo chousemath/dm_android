@@ -34,7 +34,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Specialty"
-            android:onClick="openSpecialtySelectionDialog"
             android:layout_below="@id/main_text" />
 
         <Button
@@ -42,7 +41,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Station"
-            android:onClick="openStationSelectionDialog"
             android:layout_below="@id/button_specialty_select" />
 
         <Button
@@ -50,7 +48,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hospital Language"
-            android:onClick="openHospitalLanguageSelectionDialog"
             android:layout_below="@id/button_station_select" />
 
         <Button
@@ -58,7 +55,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Search"
-            android:onClick="performSearch"
             android:layout_below="@id/button_language_select" />
 
     </RelativeLayout>

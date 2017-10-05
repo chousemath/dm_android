@@ -23,29 +23,32 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    static String[] specialtySelectionArray;
-    static String[] stationSelectionArray;
-    static String[] hospitalLanguageSelectionArray;
-    static final String apiBaseUrl = "https://simplwe.herokuapp.com/";
-    static String selectionOptionsUrl = apiBaseUrl + "mobile_home_8zVITR21iSmPAlwIkvP8Ig";
-    static String updateStationsUrl = apiBaseUrl + "return_stations_mobile_8zVITR21iSmPAlwIkvP8Ig";
-    static String selectedSpecialty = "";
-    static String selectedStation = "";
-    static String selectedLanguage = "";
-    static RequestQueue requestQueue;
+    private static String[] specialtySelectionArray;
+    private static String[] stationSelectionArray;
+    private static String[] hospitalLanguageSelectionArray;
+    private static final String apiBaseUrl = "https://simplwe.herokuapp.com/";
+    private static String selectionOptionsUrl = apiBaseUrl + "mobile_home_8zVITR21iSmPAlwIkvP8Ig";
+    private static String updateStationsUrl = apiBaseUrl + "return_stations_mobile_8zVITR21iSmPAlwIkvP8Ig";
+    private static String selectedSpecialty = "";
+    private static String selectedStation = "";
+    private static String selectedLanguage = "";
+    private static RequestQueue requestQueue;
 
     Button specialtySelectButton;
     Button stationSelectButton;
     Button languageSelectButton;
+    Button searchButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // this line instructs Android to actually display everything on the screen
         setContentView(R.layout.activity_main);
 
         specialtySelectButton = (Button)findViewById(R.id.button_specialty_select);
         stationSelectButton = (Button)findViewById(R.id.button_station_select);
         languageSelectButton = (Button)findViewById(R.id.button_language_select);
+        searchButton = (Button)findViewById(R.id.button_search);
 
         // stub for Volley code to get specialty, station, language selections...
         // in Java, the final keyword is used for variables that will not change
@@ -86,91 +89,115 @@ public class MainActivity extends AppCompatActivity {
         });
 
         requestQueue.add(jsObjectRequest);
-    }
 
-    public void openSpecialtySelectionDialog(View view) {
-        AlertDialog.Builder specialtySelectionAlert = new AlertDialog.Builder(this);
-        specialtySelectionAlert.setTitle("Select a medical specialty");
-        specialtySelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when clicking this button goes here...
-                selectedSpecialty = "";
-                dialog.dismiss();
+        View.OnClickListener specialtySelectButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder specialtySelectionAlert = new AlertDialog.Builder(MainActivity.this);
+                specialtySelectionAlert.setTitle("Select a medical specialty");
+                specialtySelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when clicking this button goes here...
+                        selectedSpecialty = "";
+                        dialog.dismiss();
+                    }
+                });
+                specialtySelectionAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when clicking this button goes here...
+                        System.out.println("specialty selection has been canceled");
+                        dialog.dismiss();
+                    }
+                });
+                specialtySelectionAlert.setItems(specialtySelectionArray, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when actually clicking a specialty goes here...
+                        specialtySelectButton.setText(specialtySelectionArray[whichButton]);
+                        selectedSpecialty = specialtySelectionArray[whichButton];
+                        updateStations(selectedSpecialty);
+                        dialog.dismiss();
+                    }
+                });
+                specialtySelectionAlert.show();
             }
-        });
-        specialtySelectionAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when clicking this button goes here...
-                System.out.println("specialty selection has been canceled");
-                dialog.dismiss();
-            }
-        });
-        specialtySelectionAlert.setItems(specialtySelectionArray, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when actually clicking a specialty goes here...
-                specialtySelectButton.setText(specialtySelectionArray[whichButton]);
-                selectedSpecialty = specialtySelectionArray[whichButton];
-                updateStations(selectedSpecialty);
-                dialog.dismiss();
-            }
-        });
-        specialtySelectionAlert.show();
-    }
+        };
 
-    public void openStationSelectionDialog(View view) {
-        AlertDialog.Builder stationSelectionAlert = new AlertDialog.Builder(this);
-        stationSelectionAlert.setTitle("Select a subway station near you");
-        stationSelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when clicking this button goes here...
-                selectedStation = "";
-                dialog.dismiss();
+        View.OnClickListener stationSelectButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder stationSelectionAlert = new AlertDialog.Builder(MainActivity.this);
+                stationSelectionAlert.setTitle("Select a subway station near you");
+                stationSelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when clicking this button goes here...
+                        selectedStation = "";
+                        dialog.dismiss();
+                    }
+                });
+                stationSelectionAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when click this button goes here...
+                        System.out.println("station selection has been canceled");
+                        dialog.dismiss();
+                    }
+                });
+                stationSelectionAlert.setItems(stationSelectionArray, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when actually clicking a station goes here...
+                        stationSelectButton.setText(stationSelectionArray[whichButton]);
+                        selectedStation = stationSelectionArray[whichButton];
+                        dialog.dismiss();
+                    }
+                });
+                stationSelectionAlert.show();
             }
-        });
-        stationSelectionAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when click this button goes here...
-                System.out.println("station selection has been canceled");
-                dialog.dismiss();
-            }
-        });
-        stationSelectionAlert.setItems(stationSelectionArray, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when actually clicking a station goes here...
-                stationSelectButton.setText(stationSelectionArray[whichButton]);
-                selectedStation = stationSelectionArray[whichButton];
-                dialog.dismiss();
-            }
-        });
-        stationSelectionAlert.show();
-    }
+        };
 
-    public void openHospitalLanguageSelectionDialog(View view) {
-        AlertDialog.Builder hospitalLanguageSelectionAlert = new AlertDialog.Builder(this);
-        hospitalLanguageSelectionAlert.setTitle("Select the hospital's operating language");
-        hospitalLanguageSelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButon) {
-                // action when clicking this button goes here...
-                selectedLanguage = "";
-                dialog.dismiss();
+        View.OnClickListener languageSelectButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder hospitalLanguageSelectionAlert = new AlertDialog.Builder(MainActivity.this);
+                hospitalLanguageSelectionAlert.setTitle("Select the hospital's operating language");
+                hospitalLanguageSelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButon) {
+                        // action when clicking this button goes here...
+                        selectedLanguage = "";
+                        dialog.dismiss();
+                    }
+                });
+                hospitalLanguageSelectionAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when click this button goes here...
+                        System.out.println("hospital language selection has been canceled");
+                        dialog.dismiss();
+                    }
+                });
+                hospitalLanguageSelectionAlert.setItems(hospitalLanguageSelectionArray, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // action when actually selecting a hospital language...
+                        languageSelectButton.setText(hospitalLanguageSelectionArray[whichButton]);
+                        selectedLanguage = hospitalLanguageSelectionArray[whichButton];
+                        dialog.dismiss();
+                    }
+                });
+                hospitalLanguageSelectionAlert.show();
             }
-        });
-        hospitalLanguageSelectionAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when click this button goes here...
-                System.out.println("hospital language selection has been canceled");
-                dialog.dismiss();
+        };
+
+        View.OnClickListener searchButtonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast searchToast = Toast.makeText(MainActivity.this, "Performing your search now...", Toast.LENGTH_SHORT);
+                searchToast.show();
+                Intent intent = new Intent(MainActivity.this, SearchResultsActivity.class);
+                startActivity(intent);
             }
-        });
-        hospitalLanguageSelectionAlert.setItems(hospitalLanguageSelectionArray, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // action when actually selecting a hospital language...
-                languageSelectButton.setText(hospitalLanguageSelectionArray[whichButton]);
-                selectedLanguage = hospitalLanguageSelectionArray[whichButton];
-                dialog.dismiss();
-            }
-        });
-        hospitalLanguageSelectionAlert.show();
+        };
+
+        specialtySelectButton.setOnClickListener(specialtySelectButtonListener);
+        stationSelectButton.setOnClickListener(stationSelectButtonListener);
+        languageSelectButton.setOnClickListener(languageSelectButtonListener);
+        searchButton.setOnClickListener(searchButtonListener);
     }
 
     public void updateStations(String specialty) {
@@ -211,12 +238,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         requestQueue.add(updateStationsRequest);
-    }
-
-    public void performSearch(View view) {
-        Toast searchToast = Toast.makeText(this, "Performing your search now...", Toast.LENGTH_SHORT);
-        searchToast.show();
-        Intent intent = new Intent(this, SearchResultsActivity.class);
-        startActivity(intent);
     }
 }
