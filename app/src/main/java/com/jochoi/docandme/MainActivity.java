@@ -28,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
     static String[] hospitalLanguageSelectionArray;
     static final String apiBaseUrl = "https://simplwe.herokuapp.com/";
     static String selectionOptionsUrl = apiBaseUrl + "mobile_home_8zVITR21iSmPAlwIkvP8Ig";
+    static String updateStationsUrl = apiBaseUrl + "return_stations_mobile_8zVITR21iSmPAlwIkvP8Ig";
+    static String selectedSpecialty = "";
+    static String selectedStation = "";
+    static String selectedLanguage = "";
+    static RequestQueue requestQueue;
 
     Button specialtySelectButton;
     Button stationSelectButton;
@@ -44,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         // stub for Volley code to get specialty, station, language selections...
         // in Java, the final keyword is used for variables that will not change
-        final RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue = Volley.newRequestQueue(this);
 
         JsonObjectRequest jsObjectRequest = new JsonObjectRequest(Request.Method.GET, selectionOptionsUrl, null, new Response.Listener<JSONObject>() {
             @Override
@@ -70,13 +75,13 @@ public class MainActivity extends AppCompatActivity {
                 } catch(JSONException e) {
                     e.printStackTrace();
                 }
-                requestQueue.stop();
+                // requestQueue.stop();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                requestQueue.stop();
+                // requestQueue.stop();
             }
         });
 
@@ -89,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         specialtySelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // action when clicking this button goes here...
-                System.out.println("reset specialty selection has been clicked");
+                selectedSpecialty = "";
                 dialog.dismiss();
             }
         });
@@ -104,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // action when actually clicking a specialty goes here...
                 specialtySelectButton.setText(specialtySelectionArray[whichButton]);
+                selectedSpecialty = specialtySelectionArray[whichButton];
+                updateStations(selectedSpecialty);
                 dialog.dismiss();
             }
         });
@@ -116,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         stationSelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // action when clicking this button goes here...
-                System.out.println("reset station selection has been clicked");
+                selectedStation = "";
                 dialog.dismiss();
             }
         });
@@ -130,8 +137,8 @@ public class MainActivity extends AppCompatActivity {
         stationSelectionAlert.setItems(stationSelectionArray, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // action when actually clicking a station goes here...
-                System.out.println("station selected!!!");
                 stationSelectButton.setText(stationSelectionArray[whichButton]);
+                selectedStation = stationSelectionArray[whichButton];
                 dialog.dismiss();
             }
         });
@@ -144,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         hospitalLanguageSelectionAlert.setPositiveButton("Reset", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButon) {
                 // action when clicking this button goes here...
-                System.out.println("reset hospital language selection has been clicked");
+                selectedLanguage = "";
                 dialog.dismiss();
             }
         });
@@ -158,12 +165,52 @@ public class MainActivity extends AppCompatActivity {
         hospitalLanguageSelectionAlert.setItems(hospitalLanguageSelectionArray, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // action when actually selecting a hospital language...
-                System.out.println("hospital language selected!!!");
                 languageSelectButton.setText(hospitalLanguageSelectionArray[whichButton]);
+                selectedLanguage = hospitalLanguageSelectionArray[whichButton];
                 dialog.dismiss();
             }
         });
         hospitalLanguageSelectionAlert.show();
+    }
+
+    public void updateStations(String specialty) {
+        System.out.println("UPDATE STATIONS HAS BEEN ACTIVATED");
+        JSONObject jsonBody;
+        try {
+            jsonBody = new JSONObject("{\"selected_specialty\":\"" + specialty + "\"}");
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+        JsonObjectRequest updateStationsRequest = new JsonObjectRequest(Request.Method.POST, updateStationsUrl, jsonBody, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                System.out.println("UPDATE STATIONS: " + response.toString());
+                try {
+                    JSONArray stationSelectables = response.getJSONArray("stations");
+                    stationSelectionArray = new String[stationSelectables.length()];
+                    for (int i = 0; i < stationSelectables.length(); i++) {
+                        stationSelectionArray[i] = stationSelectables.getString(i);
+                    }
+
+                    JSONArray hospitalLanguageSelectables = response.getJSONArray("languages");
+                    hospitalLanguageSelectionArray = new String[hospitalLanguageSelectables.length()];
+                    for (int i = 0; i < hospitalLanguageSelectables.length(); i++) {
+                        hospitalLanguageSelectionArray[i] = hospitalLanguageSelectables.getString(i);
+                    }
+                } catch(JSONException e) {
+                    e.printStackTrace();
+                }
+                // requestQueue.stop();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                // requestQueue.stop();
+            }
+        });
+        requestQueue.add(updateStationsRequest);
     }
 
     public void performSearch(View view) {

@@ -6,3 +6,4 @@
 * System.out is a Java object that `outputs` things in different ways
 * variables in Java are case-sensitive
 * Java primitives are `byte`, `short`, `int`, `long`, `float` (floats must be declared with a F at the end), `double` (in Java, numerical values with a decimal component are doubles by default)
+* Unless you are absolutely certain that there will be no more Volley requests on a page, there is no reason to stop() a request queue
